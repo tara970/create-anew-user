@@ -9,17 +9,48 @@ export const Users = () =>
     const [users,setUsers] = useState([]);
     const {userDetails} = useContext(AppContext);
 
-    useEffect(()=>{
-        fetch('https://reqres.in/api/users')
-        .then((res)=> res.json())
-        .then((data)=>{
-          let serverUser = data.data || null;
-          if(serverUser){
-            serverUser = [...serverUser,userDetails];
+    
+    useEffect(() => {
+      const localUsersStr = localStorage.getItem("users");
+      if (localUsersStr) {
+        try {
+          let localUsers = JSON.parse(localUsersStr);
+          if (Array.isArray(localUsers)) {
+            // اگر یوزر لاگین شده وجود داشت، و هنوز توی لیست نبود
+            if (userDetails) {
+              const exists = localUsers.some(u => u.id === userDetails.id);
+              if (!exists) {
+                localUsers = [...localUsers, userDetails];
+              }
+            }
+            setUsers(localUsers);
+            localStorage.setItem("users", JSON.stringify(localUsers));
+          } else {
+            fetchUsersFromServer();
           }
-          setUsers(serverUser);
-        })
-    },[userDetails])
+        } catch (error) {
+          console.error("Error parsing localStorage data", error);
+          fetchUsersFromServer();
+        }
+      } else {
+        fetchUsersFromServer();
+      }
+    }, [userDetails]);
+    
+  
+  const fetchUsersFromServer = () => {
+      fetch('https://reqres.in/api/users')
+        .then((res) => res.json())
+        .then((data) => {
+          let serverUsers = data.data || [];
+          if (userDetails) {
+            serverUsers = [...serverUsers, userDetails];
+          }
+          setUsers(serverUsers);
+          localStorage.setItem("users", JSON.stringify(serverUsers));
+        });
+  };
+  
     
 
 
@@ -46,52 +77,30 @@ export const Users = () =>
 
    
 
-    async function handelDelete(userId) 
+    function handelDelete(user) 
     {
-        const response = await fetch(`https://reqres.in/api/users${userId.id}`,{
-          method : 'DELETE'
-        });
-
-        if(response.ok)
-        {
-          setUsers(users.filter(user => user.id !== userId.id))
+        const deleteUser = users.filter(u => u.id !== user.id);
+        setUsers(deleteUser);
+        localStorage.setItem('users', JSON.stringify(deleteUser));
+        
+        const currentUser = JSON.parse(localStorage.getItem('userDetails'));
+        if (currentUser && currentUser.id === user.id) {
+          localStorage.removeItem('userDetails');
         }
-
     }
+    
 
-    async function handelUpdate(userId) 
+     function handelUpdate(userId) 
     {
-       const newEmail = {  ...userId,
-        email : "ztms@12356hgj.com",
-           }
+       const updateUser = users.map((user) => {
+         if(user.id === userId.id){
+           return {...user , email: "ztms@12356hgj.com"};
+         }
+         return user;
+       })
+       setUsers(updateUser);
+       localStorage.setItem('users',JSON.stringify(updateUser));
 
-       try {
-        const response = await fetch(`https://reqres.in/api/users/${userId.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newEmail), // Make sure to structure the request body as an object
-        });
-    
-        if (response.ok) {
-          const updatedUser = await response.json();
-          setUsers((prevusers)=>
-            {
-              return prevusers.map((user)=>
-                {
-                  return user.id === userId.id ? updatedUser : user;
-                }
-              )
-            }
-          )
-        } else {
-          console.error('Failed to update user');
-        }
-      } catch (error) {
-        console.error('Error updating user:', error);
-      }
-    
     }
        
                

@@ -12,14 +12,28 @@ export const AppContext = createContext();
 
 function App() {
 
-const [username,setUsername] = useState(()=>{
-  const saveUser = JSON.parse(localStorage.getItem('userDetails'));
-  return saveUser ? saveUser.first_name : '';
-});
-const [userDetails,setUserDetails] = useState(()=>{
-    return JSON.parse(localStorage.getItem('userDetails')) || null;
-}); // برای کاربری که لاگین کرده
+  const [userDetails, setUserDetails] = useState(() => {
+    try {
+      const savedUser = JSON.parse(localStorage.getItem('userDetails'));
+      return savedUser || null;
+    } catch (error) {
+      console.error("Failed to parse userDetails from localStorage:", error);
+      return null;
+    }
+  });
+  
+  const [username, setUsername] = useState(() => {
+    try {
+      const savedUser = JSON.parse(localStorage.getItem('userDetails'));
+      return savedUser ? savedUser.first_name : '';
+      
+    } catch (error) {
+      console.error("Failed to parse userDetails from localStorage:", error);
+      return '';
+    }
+  });
 
+  
   return (
     <div className="App">
      <AppContext.Provider value={{username , setUsername , userDetails , setUserDetails}}>
