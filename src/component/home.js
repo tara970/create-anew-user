@@ -4,7 +4,7 @@
  
  export const Home = () =>
 {
-   const {username} = useContext(AppContext);
+   const {username , setUsername} = useContext(AppContext);
    
    return (
     <div className="text-center mt-5">
