@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../App";
 //import axios from "axios";
 
 export const Users = () =>
 {
     const [users,setUsers] = useState([]);
+    const {userDetails} = useContext(AppContext);
+
+    useEffect(()=>{
+        fetch('https://reqres.in/api/users')
+        .then((res)=> res.json())
+        .then((data)=>{
+          let serverUser = data.data || null;
+          if(serverUser){
+            serverUser = [...serverUser,userDetails];
+          }
+          setUsers(serverUser);
+        })
+    },[userDetails])
     
-    
-    useEffect(
-        ()=>
-        {
-           fetch('https://reqres.in/api/users').then((res) => res.json()).then((data) => {setUsers(data.data)})
-        },[]) 
 
 
     return (
-        <div key={users.id}>
-        <button className="btn btn-info m-4" onClick={handelCreate}>CREATE</button>
-        <div className="row">{users.map((user)=>{
+        <div className="row">{users.filter(user => user != null).map((user)=>{
             return(
                 <div className="col-4 p-5 text-center" key={user.id}>
                     <img  src={user.avatar}  alt="" style={{borderRadius:'50%' , width:'50px' , height:'50px'}}/>
@@ -34,41 +41,10 @@ export const Users = () =>
                 </div>
             ) 
         })}</div>
-        </div>
+       
     )
 
-    async function handelCreate()  
-    {
-        const newuser = {
-            first_name : 'tara',
-            last_name : 'jush',
-            email : 'tr@1234hjku.com',
-            avatar : 'https://pouyaandish.com/wp-content/uploads/2021/08/Professional_Headshot_101.jpg'
-        }
-          
-        try {
-
-             const response = await fetch('https://reqres.in/api/users',{
-              method : 'POST',
-              headers :{
-                'Content-Type' : 'application/json'
-              },
-              body : JSON.stringify(newuser),
-             });
-               
-             if(response.ok)
-             {
-              const newUse = await response.json();
-              setUsers([...users , newUse]);
-             }else{
-              console.log('error');
-             }
-
-        }catch(error){
-            console.log(error);
-        }
-        
-    }
+   
 
     async function handelDelete(userId) 
     {

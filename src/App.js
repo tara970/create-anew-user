@@ -12,11 +12,17 @@ export const AppContext = createContext();
 
 function App() {
 
-const [username,setUsername] = useState("");
+const [username,setUsername] = useState(()=>{
+  const saveUser = JSON.parse(localStorage.getItem('userDetails'));
+  return saveUser ? saveUser.first_name : '';
+});
+const [userDetails,setUserDetails] = useState(()=>{
+    return JSON.parse(localStorage.getItem('userDetails')) || null;
+}); // برای کاربری که لاگین کرده
 
   return (
     <div className="App">
-     <AppContext.Provider value={{username , setUsername}}>
+     <AppContext.Provider value={{username , setUsername , userDetails , setUserDetails}}>
      <Router>
       <Navbar/>
        <Routes>
