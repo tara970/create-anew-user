@@ -10,37 +10,57 @@ import { useContext } from "react";
 export const Login = () =>
 {
     
-    const {setUsername} = useContext(AppContext);
+    const {setUsername , setUserDetails} = useContext(AppContext);
     
     const navigate = useNavigate();
     
     const schema = yup.object().shape({
-        name : yup.string().required(),
-        phoneNumber : yup.number().integer().required(),
+        first_name : yup.string().required(),
+        last_name : yup.string().required(),
         email : yup.string().email().required()
     })
 
-    const {register , handleSubmit} = useForm({
-        resolver : yupResolver(schema)
+    
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(schema)
     });
-
-     //const [btn,setBtn] = useState("");
-
     
     const onSubmit = (data) =>
     {
-        const message = data.name;
-        setUsername(message);
-        navigate("/");
+        const newUser = {
+            id:Date.now(),
+            first_name:data.first_name,
+            last_name:data.last_namename,
+            email:data.email,
+            avatar:"https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        };
+        setUsername(newUser.first_name);
+        setUserDetails(newUser);
+
+        localStorage.setItem('userDetails',JSON.stringify(newUser));
+
+        navigate("/users");
     }
     
     return (<>
-    <form onSubmit={handleSubmit(onSubmit)}>
-        <input type="text" placeholder="name" {...register("name")}/>
-        <input type="text" placeholder="phone number" {...register("phoneNumber")}/>
-        <input type="text" placeholder="email" {...register("email")}/>
-        <button type="submit" >Login</button>
-    </form>
+   <div className="container mt-5">
+            <h2>Login</h2>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-3">
+                    <input type="text" className="form-control" placeholder="First Name" {...register("first_name")} />
+                    <p className="text-danger">{errors.first_name?.message}</p>
+                </div>
+                <div className="mb-3">
+                    <input type="text" className="form-control" placeholder="Last Name" {...register("last_name")} />
+                    <p className="text-danger">{errors.last_name?.message}</p>
+                </div>
+                <div className="mb-3">
+                    <input type="email" className="form-control" placeholder="Email" {...register("email")} />
+                    <p className="text-danger">{errors.email?.message}</p>
+                </div>
+                <button type="submit" className="btn btn-success">Login</button>
+            </form>
+        </div>
     
     </>)
     

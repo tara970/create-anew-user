@@ -6,9 +6,18 @@
 {
    const {username} = useContext(AppContext);
    
-   return (<div>
-        <h3>this is home page , user is :{username}</h3>
-        <p>Hi Dear <h5 style={{color : "red"}}>{username}</h5></p>
-        
-    </div>)
+   return (
+    <div className="text-center mt-5">
+      <div className="card p-5 shadow-sm">
+        <h1 className="mb-4 text-primary">Welcome {username ? username : "Guest"}!</h1>
+        {username ? (
+          <p className="lead">
+            Hi Dear <span className="text-danger fw-bold">{username}</span>
+          </p>
+        ) : (
+          <p className="lead">Please login to enjoy more features!</p>
+        )}
+      </div>
+    </div>
+   )
 }
