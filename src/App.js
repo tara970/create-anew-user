@@ -22,16 +22,8 @@ function App() {
     }
   });
   
-  const [username, setUsername] = useState(() => {
-    try {
-      const savedUser = JSON.parse(localStorage.getItem('userDetails'));
-      return savedUser ? savedUser.first_name : '';
-      
-    } catch (error) {
-      console.error("Failed to parse userDetails from localStorage:", error);
-      return '';
-    }
-  });
+  const [username, setUsername] = useState('');
+    
 
   
   return (
