@@ -7,17 +7,31 @@
    const {username , setUsername} = useContext(AppContext);
    
    return (
-    <div className="text-center mt-5">
-      <div className="card p-5 shadow-sm">
-        <h1 className="mb-4 text-primary">Welcome {username ? username : "Guest"}!</h1>
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{ background: "#f0f4f8" }}
+    >
+      <div className="card shadow-lg border-0 p-5 text-center" style={{ maxWidth: "500px", width: "100%" }}>
+        <h1 className="text-primary mb-4">
+          Welcome {username ? username : "Guest"}!
+        </h1>
+
         {username ? (
-          <p className="lead">
-            Hi Dear <span className="text-danger fw-bold">{username}</span>
-          </p>
+          <>
+            <p className="lead mb-3">
+              خوش آمدی عزیز <span className="fw-bold text-danger">{username}</span>
+            </p>
+            <p className="text-muted">
+              با موفقیت وارد شدید. از امکانات سایت لذت ببرید!
+            </p>
+          </>
         ) : (
-          <p className="lead">Please login to enjoy more features!</p>
+          <>
+            <p className="lead mb-3">لطفاً ابتدا وارد حساب کاربری شوید</p>
+            <p className="text-muted">برای دسترسی کامل به امکانات سایت</p>
+          </>
         )}
       </div>
     </div>
-   )
+  );
 }

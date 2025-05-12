@@ -12,22 +12,13 @@ export const AppContext = createContext();
 
 function App() {
 
-  const [userDetails, setUserDetails] = useState(() => {
-    try {
-      const savedUser = JSON.parse(localStorage.getItem('userDetails'));
-      return savedUser || null;
-    } catch (error) {
-      console.error("Failed to parse userDetails from localStorage:", error);
-      return null;
-    }
-  });
+  const [userDetails, setUserDetails] = useState(null);
   
   const [username, setUsername] = useState('');
     
 
   
   return (
-    <div className="App">
      <AppContext.Provider value={{username , setUsername , userDetails , setUserDetails}}>
      <Router>
       <Navbar/>
@@ -39,7 +30,6 @@ function App() {
        </Routes>
      </Router> 
      </AppContext.Provider>
-    </div>
   );
 }
 
